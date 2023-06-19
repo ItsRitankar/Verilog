@@ -1,0 +1,28 @@
+
+
+module Traffic_control_TB;
+  reg clk,rst;
+  wire[2:0]sig_S1;
+  wire[2:0]sig_S2;
+  wire[2:0]sig_S3;
+  wire[2:0]sig_S4;
+  Traffic_control dut(.clk(clk),.rst(rst),.sig_S1(sig_S1),.sig_S2(sig_S2),.sig_S3(sig_S3),.sig_S4(sig_S4));
+    initial begin
+    // Dump waves
+    $dumpfile("dump.vcd");
+    $dumpvars(1);
+    end
+ initial
+   begin
+     clk=1'b0;
+     forever #(100) clk=~clk;
+   end
+  initial
+    begin
+      rst=0;
+      #10000;
+      
+      $finish;
+    end
+
+endmodule

@@ -1,0 +1,40 @@
+module finaladder(x,y,z,sign,zero,carry,parity,overflow);
+  input[15:0]x,y;
+  output[15:0]z;
+  output sign,zero,carry,parity,overflow;
+  wire [3:0]c;
+  
+  adder4 A1(z[3:0],c[1],x[3:0],y[3:0],1'b0);
+  adder4 A2(z[7:4],c[2],x[7:4],y[7:4],c[1]);
+  adder4 A3(z[11:8],c[3],x[11:8],y[11:8],c[2]);
+  adder4 A4(z[15:12],carry,x[15:12],y[15:12],c[3]);
+  
+  
+  
+  assign sign=z[15];
+  assign zero=~|z;
+  assign parity=~^z;
+  assign overflow=(x[15]&y[15]&~z[15]) |(~x[15]&~y[15]&z[15]);
+endmodule
+
+module adder4(sum,cout,a,b,cin);
+  input[3:0]a,b;
+  input cin;
+  output[3:0]sum;
+  output cout;
+  wire[3:0]c;
+  //assign {cout,sum}=a+b+cin;
+  fulladder A0(sum[0],c[1],a[0],b[0],cin);
+  fulladder A1(sum[1],c[2],a[1],b[1],c[1]);
+  fulladder A2(sum[2],c[3],a[2],b[2],c[2]);
+  fulladder A3(sum[3],cout,a[3],b[3],c[3]);
+endmodule
+
+module fulladder(s,co,a,b,ci);
+  input a,b,ci;
+  output s,co;
+  wire c1,c2,s1;
+  xor X1(s1,a,b),X2(s,s1,ci),X3(co,c2,c1);
+  and A1(c1,a,b),A2(c2,ci,s1);
+endmodule
+  

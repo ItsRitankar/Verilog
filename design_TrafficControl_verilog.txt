@@ -1,0 +1,149 @@
+
+
+module Traffic_control(
+  input clk,rst,
+  output reg[2:0]sig_S1,
+  output reg[2:0]sig_S2,
+  output reg[2:0]sig_S3,
+  output reg[2:0]sig_S4
+);
+  parameter S1=0,S2=1,S3=2,S4=3,S5=4,S6=5;
+  reg[3:0]count;
+  reg[2:0]ps;
+  parameter T1=7,T2=2,T3=5,T4=3;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        begin
+          ps<=S1;
+          count<=0;
+        end
+      else
+        case(ps)
+          S1:if(count<T1)
+            begin
+              ps<=S1;
+              count<=count+1;
+            end
+          else
+            begin
+              ps<=S2;
+              count<=0;
+            end
+          S2:
+            if(count<T2)
+            begin
+              ps<=S2;
+              count<=count+1;
+            end
+          else
+            begin
+              ps<=S3;
+              count<=0;
+            end
+          S3:
+            if(count<T3)
+            begin
+              ps<=S3;
+              count<=count+1;
+            end
+          else
+            begin
+              ps<=S4;
+              count<=0;
+            end
+          S4:
+            if(count<T2)
+            begin
+              ps<=S4;
+              count<=count+1;
+            end
+          else
+            begin
+              ps<=S5;
+              count<=0;
+            end
+          S5:
+            if(count<T4)
+            begin
+              ps<=S5;
+              count<=count+1;
+            end
+          else
+            begin
+              ps<=S6;
+              count<=0;
+            end
+          S6:
+            if(count<T2)
+            begin
+              ps<=S6;
+              count<=count+1;
+            end
+          else
+            begin
+              ps<=S1;
+              count<=0;
+            end
+          default:
+            begin
+              ps<=S1;
+              count<=0;
+            end
+        endcase
+    end
+  always@(ps)
+    begin
+      case(ps)
+        S1:
+          begin
+          sig_S1<=3'b001;//Main line from left to right
+          sig_S2<=3'b100;//Signal for T-operation
+          sig_S3<=3'b001;//Main line from right to left
+          sig_S4<=3'b100;//for turning from lane to main line towards right.
+          end
+        S2:
+           begin
+          sig_S1<=3'b001;//Main line from left to right
+          sig_S2<=3'b100;//Signal for T-operation
+          sig_S3<=3'b010;//Main line from right to left
+          sig_S4<=3'b100;//for turning from lane to main line towards right.
+          end
+        S3:
+           begin
+          sig_S1<=3'b001;//Main line from left to right
+          sig_S2<=3'b001;//Signal for T-operation
+          sig_S3<=3'b100;//Main line from right to left
+          sig_S4<=3'b100;//for turning from lane to main line towards right.
+          end
+        S4:
+           begin
+          sig_S1<=3'b010;//Main line from left to right
+          sig_S2<=3'b010;//Signal for T-operation
+          sig_S3<=3'b100;//Main line from right to left
+          sig_S4<=3'b100;//for turning from lane to main line towards right.
+          end
+        S5:
+           begin
+          sig_S1<=3'b100;//Main line from left to right
+          sig_S2<=3'b100;//Signal for T-operation
+          sig_S3<=3'b100;//Main line from right to left
+          sig_S4<=3'b001;//for turning from lane to main line towards right.
+          end
+        S6:
+           begin
+          sig_S1<=3'b100;//Main line from left to right
+          sig_S2<=3'b100;//Signal for T-operation
+          sig_S3<=3'b100;//Main line from right to left
+          sig_S4<=3'b010;//for turning from lane to main line towards right.
+          end
+        default:
+           begin
+          sig_S1<=3'b000;//Main line from left to right
+          sig_S2<=3'b000;//Signal for T-operation
+          sig_S3<=3'b000;//Main line from right to left
+          sig_S4<=3'b000;//for turning from lane to main line towards right.
+          end
+      endcase
+    end
+endmodule
