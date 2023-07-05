@@ -1,0 +1,48 @@
+module seq1011_det(
+  input clk,input rst,input in,output out);
+     parameter S0=0,
+               S1=1,
+               S2=2,
+               S3=3,
+               S4=4;
+  reg[2:0]ps,ns;
+  assign out=ps==S4?1:0;
+  always@(posedge clk or posedge rst)
+ begin
+    if(rst==1)
+        ps<=S0;
+     else
+        ps<=ns;
+ end
+  always@(ps or in)
+    begin
+     case(ps)
+       S0: begin 
+         if(in)
+             ns<=S1;
+            else
+              ns<=S0;
+            end
+       S1: begin if(in)
+         ns<=S1;
+         else ns<=S2;
+        
+         end
+       S2: begin if(in)
+         ns<=S3;
+         else ns<=S0;
+        
+    end
+       S3: begin if(in)
+         ns<=S4;
+         else ns<=S2;
+        
+    end 
+       S4: begin
+         if(in)
+           ns<=S1;
+         else ns<=S2;
+       end
+     endcase
+   end 
+endmodule
