@@ -1,0 +1,13 @@
+
+module vedic_8x8_mtb;
+  reg [7:0]a;
+  reg [7:0]b;
+  wire [15:0]c;
+  vedic_8x8_multiplier dut(.c(c),.a(a),.b(b));
+  initial begin
+    $dumpvars(1, vedic_8x8_mtb);
+    //test case1
+    a=8'b01010001;
+    b=8'b00110011;
+  end
+endmodule

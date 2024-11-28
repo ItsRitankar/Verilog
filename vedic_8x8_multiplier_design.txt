@@ -1,0 +1,62 @@
+module vedic_8x8_multiplier(c,a,b);
+  output [15:0]c;
+  input  [7:0]a;
+  input  [7:0]b;
+  wire [7:0]w1;
+  wire [7:0]w2;
+  wire [7:0]w3;
+  wire [7:0]w4;
+  wire [7:0]add_8bit;
+  wire [11:0]add_12bit;
+  vedic_4x4_multiplier u1(w1,a[3:0],b[3:0]);
+  vedic_4x4_multiplier u2(w2,a[7:4],b[3:0]);
+  vedic_4x4_multiplier u3(w3,a[3:0],b[7:4]);
+  vedic_4x4_multiplier u4(w4,a[7:4],b[7:4]); 
+  assign c[3:0]=w1[3:0];
+  assign add_8bit={4'b0000,w1[7:4]}+w2;
+  assign add_12bit={4'b0000,w3}+{w4,4'b0000};
+  assign c[15:4]=add_12bit+{4'b0000,add_8bit};
+endmodule
+
+module vedic_4x4_multiplier(c,a,b);
+  output[7:0]c;
+  input [3:0]a;
+  input [3:0]b;
+  wire [3:0]w1;
+  wire [3:0]w2;
+  wire [3:0]w3;
+  wire [3:0]w4;
+  wire [3:0]add_4bit;
+  wire [5:0]add_6bit;
+  vedic_2x2_multiplier u1(w1,a[1:0],b[1:0]);
+  vedic_2x2_multiplier u2(w2,a[3:2],b[1:0]);
+  vedic_2x2_multiplier u3(w3,a[1:0],b[3:2]);
+  vedic_2x2_multiplier u4(w4,a[3:2],b[3:2]);
+  assign c[1:0]=w1[1:0];
+  assign add_4bit={2'b00,w1[3:2]}+w2[3:0];
+  assign add_6bit={w4,2'b00}+{2'b00,w3};
+  assign c[7:2]=add_6bit+{2'b00,add_4bit};
+endmodule
+
+module vedic_2x2_multiplier(c,a,b);
+  output [3:0] c;
+  input  [1:0] a;
+  input  [1:0] b;
+  wire [3:0]w;
+  and(c[0],a[0],b[0]); //assign c[0]=a[0]&b[0];
+  and(w[0],a[1],b[0]);
+  and(w[1],a[0],b[1]);
+  HA u0(c[1],w[2],w[0],w[1]);
+  and(w[3],a[1],b[1]);
+  HA u1(c[2],c[3],w[3],w[2]);
+  
+  
+  
+endmodule
+
+module HA(sum,carry,a,b);
+  output sum,carry;
+  input a,b;
+  xor(sum,a,b);
+  and(carry,a,b);
+endmodule
